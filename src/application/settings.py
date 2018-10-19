@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
-import os
+import os, sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -37,7 +37,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'comments.apps.CommentsConfig',
+    'core.apps.CoreConfig',
+    'categories.apps.CategoriesConfig',
+    'users.apps.UsersConfig',
+    'topics.apps.TopicsConfig',
+    'likes.apps.LikesConfig',
+    'crispy_forms',
+    'debug_toolbar',
 ]
+
+AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -47,7 +57,19 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
+
+INTERNAL_IPS = [
+    '127.0.0.1'
+]
+
+CASHES = {
+    'default' : {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}
 
 ROOT_URLCONF = 'application.urls'
 
@@ -75,10 +97,19 @@ WSGI_APPLICATION = 'application.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'mipt_overflow',
+        'USER': 'highoc',
+        'PASSWORD': 'Ssdawz5566__',
+        'HOST': 'localhost'
     }
 }
+
+TESTING = 'test' in sys.argv
+
+if TESTING:
+    DATABASES['default'] = {'ENGINE': 'django.db.backends.sqlite3'}
+
 
 
 # Password validation
@@ -118,3 +149,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+LOGIN_URL = 'core:login'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# STATICFILES_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_S3_ENDPOINT_URL = 'http://hb.bizmrg.com/'
+AWS_ACCESS_KEY_ID = 'quZTPp3V28P7V1SGJRXxvs'
+AWS_SECRET_ACCESS_KEY = '7arUgwahLMmhHpreUJh9RTkHB7LdD5UNcTjA5VLSP59G'
+AWS_STORAGE_BUCKET_NAME = 'miptoverflow'
+
