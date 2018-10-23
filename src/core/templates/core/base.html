@@ -1,0 +1,76 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{% static "bootstrap-4.1.0/favicon.ico" %}">
+
+    <title> {% block TITLE %}MIPT Overflow{% endblock %} </title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static "bootstrap-4.1.0/dist/css/bootstrap.min.css" %}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    {% block CUSTOME_STYLES %}{% endblock %}
+    <link href="{% static "bootstrap-4.1.0/docs/4.1/examples/sticky-footer-navbar/sticky-footer-navbar.css" %}" rel="stylesheet">
+    <link href="{% static "chosen/bootstrap-chosen.css" %}" rel="stylesheet">
+  </head>
+
+  <body>
+    <header>
+      <!-- Fixed navbar -->
+      <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+          <a class="navbar-brand" href="#">Mipt Overflow</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+              <ul class="navbar-nav ml-auto">
+                  {% if user.is_authenticated  %}
+                      <li class="nav-item">
+                          <a class="nav-link" href="{% url "users:index" %}">{{ user.first_name }} {{ user.last_name }} [{{ user.username }}]</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link" href="{% url "core:logout" %}">Выйти</a>
+                      </li>
+                  {% else %}
+                      <li class="nav-item">
+                          <a class="nav-link" href="{% url "core:login" %}">Войти</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link" href="{% url "core:register" %}">Зарегестрироваться</a>
+                      </li>
+                  {% endif %}
+              </ul>
+          </div>
+      </nav>
+    </header>
+
+    <!-- Begin page content -->
+    <main role="main" class="container">
+        {% block CONTENT %}
+            Default content
+        {% endblock %}
+    </main>
+
+    <footer class="footer">
+        {% block FOOTER %}
+        <div class="container">
+            <span class="text-muted">@Copyleft Morev Maxim Company 2018.</span>
+        </div>
+        {% endblock %}
+    </footer>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{% static "bootstrap-4.1.0/assets/js/vendor/jquery-3.3.1.min.js" %}"></script>
+    <script src="{% static "bootstrap-4.1.0/assets/js/vendor/popper.min.js" %}"></script>
+    <script src="{% static "bootstrap-4.1.0/dist/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "my_scripts.js" %}"></script>
+    <script src="http://harvesthq.github.io/chosen/chosen.jquery.js"></script>
+  </body>
+</html>

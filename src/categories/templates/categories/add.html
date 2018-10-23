@@ -1,0 +1,18 @@
+{% extends "core/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block TITLE %} Создание категории - {{ block.super }} {% endblock %}
+
+
+{% block CONTENT %}
+    <div class="row mt-2">
+        <div class="col-md-12">
+            <p class="card card-block bg-faded"><a href="{% url "categories:list" %}">Назад</a></p>
+        </div>
+    </div>
+
+    <h3>Создание категории</h3>
+
+    {% crispy category_form %}
+
+{% endblock %}

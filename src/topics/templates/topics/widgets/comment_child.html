@@ -1,0 +1,22 @@
+{% load static %}
+
+<li class="media">
+    <div class="media-body">
+        <div class="media-heading">
+            <h6>{{ now_comment.author.username }}</h6>
+            <h6 class="text-muted">Добавлено: {{ now_comment.updated }}</h6>
+        </div>
+        <a class="btn float-right addcommentbutton" data-toggle="modal" data-target="#myModal"
+           data-url="{% url "topics:comment_add" pk=now_comment.topic.id parent_id=now_comment.id %}" role="button"> Ответить</a>
+
+        <div class="media-text">{{ now_comment.text }}</div><hr>
+
+        {% if not now_comment.child_comments == null %}
+        <ul class="media-list">
+            {% for child in now_comment.child_comments.all %}
+                {% include "topics/widgets/comment_child.html" with now_comment=child %}
+            {% endfor %}
+         </ul>
+        {% endif %}
+    </div>
+</li>

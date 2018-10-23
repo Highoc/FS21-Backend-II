@@ -1,0 +1,7 @@
+<ul class="media-list">
+    {% for now_comment in comments %}
+        {% include "topics/widgets/comment_child.html" %}
+    {% empty %}
+        <div class="media-text">Комментариев пока нет</div>
+    {% endfor %}
+</ul>

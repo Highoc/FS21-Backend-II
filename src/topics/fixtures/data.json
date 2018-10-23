@@ -1,0 +1,1 @@
+[{"model": "manager_topic.topic", "pk": 1, "fields": {"author": 2, "text": "Topic #1 text.", "name": "Topic #1", "is_archive": false, "created": "2018-10-06T12:36:26.050Z", "updated": "2018-10-06T12:36:26.050Z", "is_published": false, "viewcount": 4, "categories": [1]}}]

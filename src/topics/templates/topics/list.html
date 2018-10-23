@@ -1,0 +1,20 @@
+{% extends "core/base.html" %}
+
+{% block TITLE %}
+    This is topic_list
+{% endblock %}
+
+
+{% block CONTENT %}
+    <a href="{% url 'users:index' %}">back</a><br>
+
+    <form action="" method="get">
+        {{ topics_form }}
+        <input type="submit" value="Go">
+    </form>
+
+    Topics:<br>
+    {% for now_topic in topics %}
+        [{{ now_topic.id }}] {{ now_topic.name }} <a href="{% url "topics:detail" pk=now_topic.id %}">link</a><br>
+    {% endfor %}
+{% endblock %}

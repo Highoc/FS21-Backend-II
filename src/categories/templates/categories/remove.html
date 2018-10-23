@@ -1,0 +1,15 @@
+{% extends "core/base.html" %}
+
+{% block TITLE %} Доступ к категории - {{ block.super }} {% endblock %}
+
+{% block CONTENT %}
+
+    <div class="row mt-2">
+        <div class="col-md-12">
+            <p class="card card-block bg-faded"><a href="{% url 'catgeories:list'%}">Назад</a></p>
+        </div>
+    </div>
+
+    <h3>Доступ к категории</h3>
+
+{% endblock %}
