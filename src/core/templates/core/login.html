@@ -1,0 +1,26 @@
+{% extends "core/base.html" %}
+
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block TITLE %} Login - {{ block.super }}{% endblock %}
+
+{% block CUSTOME_STYLES %}
+    <link href="{% static "bootstrap-4.1.0/docs/4.1/examples/sign-in/signin.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block CONTENT %}
+    <form class="form-signin" action="" method="post">
+        {% csrf_token %}
+        {% crispy form %}
+    </form>
+    <div class="text-black-50 text-md-center">
+        Don't have an account?
+        <a href="{% url "core:register" %}">Sign up</a>
+    </div>
+    <div class="text-black-50 text-md-center">
+        Login with
+        <a href="/login/vk-oauth2/">VK</a>
+        <a href="/login/github/">Github</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "core/base.html" %}
+
+{% block TITLE %}Доступ к топику - {{ block.super }} {% endblock %}
+
+
+{% block CONTENT %}
+      <div class="row mt-2">
+        <div class="col-md-12">
+            <p class="card card-block bg-faded"><a href="{% url 'users:index'%}">Назад</a></p>
+        </div>
+    </div>
+
+    <h3>Доступ к топику</h3>
+{% endblock %}

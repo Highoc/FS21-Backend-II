@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'likes.apps.LikesConfig',
     'crispy_forms',
     'debug_toolbar',
+    'social_django',
 ]
 
 AUTH_USER_MODEL = 'users.User'
@@ -59,6 +60,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.vk.VKOAuth2',
+    'social_core.backends.github.GithubOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 INTERNAL_IPS = [
     '127.0.0.1'
@@ -84,6 +91,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
             ],
         },
     },
@@ -162,3 +170,12 @@ AWS_ACCESS_KEY_ID = 'quZTPp3V28P7V1SGJRXxvs'
 AWS_SECRET_ACCESS_KEY = '7arUgwahLMmhHpreUJh9RTkHB7LdD5UNcTjA5VLSP59G'
 AWS_STORAGE_BUCKET_NAME = 'miptoverflow'
 
+SOCIAL_AUTH_VK_OAUTH2_KEY = '6727578'
+SOCIAL_AUTH_VK_OAUTH2_SECRET = 'HFne4archRbNZjxmSAeJ'
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
+
+SOCIAL_AUTH_GITHUB_KEY = 'e7d317813754050bab3c'
+SOCIAL_AUTH_GITHUB_SECRET = '48c52cb81e18b4df36e289610deaa99ddf11a21f'
+SOCIAL_AUTH_GITHUB_SCOPE = ['email']
+
+LOGIN_REDIRECT_URL = '/'

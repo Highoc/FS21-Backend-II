@@ -1,0 +1,96 @@
+{% extends "core/base.html" %}
+{% load cache %}
+
+{% block TITLE %} Категория - {{ block.super }} {% endblock %}
+
+
+{% block CONTENT %}
+
+    <div class="row mt-2">
+        <div class="col-md-12">
+            <p class="card card-block bg-faded"><a href="{% url 'categories:list'%}">Назад</a></p>
+        </div>
+    </div>
+
+    <h3>Категория "{{category.name}}" (всего {{ topics.get_stats.all_topic_count }} топиков)</h3>
+    <div class="row my-2">
+        <div class="col-md-12">
+            <div class="card mt-1">
+                <div class="card-body">
+                    <p>{{ category.description }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a class="btn btn-primary float-right" href="{% url "topics:add" %}" role="button">Добавить топик</a>
+
+    <h3>Топики</h3>
+
+    <div class="row mb-2">
+        <form action="" method="get">
+            <div class="col-md-12">
+                <div class="form-row">
+                    <div class="col">
+                        {{ topics_form.sort }}
+                    </div>
+                    <div class="col">
+                        {{ topics_form.search }}
+                    </div>
+                    <div class="col">
+                        <input class="btn btn-secondary" type="submit" value="Поиск">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="row">
+        {% for topic in topics %}
+            <div class="col-md-12">
+                <div class="card mt-1">
+                    <div class="card-body">
+                        <a class="card-link" href="{% url "topics:detail" pk=topic.id %}">{{ topic.name }}</a>
+                        <hr>
+                        <div>
+                            Автор: <i>{{ topic.author.username }}</i>
+                        </div>
+
+                        <div>
+                            В категориях:
+                            {% for now_category in topic.categories.all %}
+                                {% if not forloop.first %},{%endif%}
+                                <i><a href="{% url "categories:detail" pk=now_category.id %}">{{ now_category.name }}</a></i>
+                            {% endfor %}
+                        </div>
+                        <hr>
+                        <div>
+                            Понравилось ({{ topic.likes_count }}):
+                            {% for like in topic.topic_likes.all %}
+                                {% if not like.is_archive %}
+                                    <i>{{ like.author.username }}</i>
+                                    {% if not forloop.last %},{%endif%}
+                                {% endif %}
+                            {% empty %}
+                                пока никому
+                            {% endfor %}
+                        </div>
+                        <div>
+                            Посмотрело {% cache 5 "viewcount" topic.id %} {{ topic.viewcount }} {% endcache %} человек
+                        </div>
+                        {% if user.is_superuser or topic.author == user %}
+                            {% if category.is_hidden %}
+                                <div class="card-link float-right"><a href="{% url 'topics:remove' pk=category.id %}">Открыть</a></div><br>
+                            {% else %}
+                                <div class="card-link float-right"><a href="{% url 'topics:remove' pk=category.id %}">Скрыть</a></div><br>
+                            {% endif %}
+                            <div class="card-link float-right"><a href="{% url 'topics:edit' pk=category.id %}">Редактировать</a></div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-md-12">Нет ни одного топика в категории</div>
+        {% endfor %}
+    </div>
+{% endblock %}
