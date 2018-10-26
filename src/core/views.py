@@ -1,11 +1,12 @@
+from django.http.response import HttpResponseForbidden, HttpResponseNotFound, HttpResponseRedirect, HttpResponse
+
+from application import settings
+
 from django.shortcuts import render
 from django.urls import reverse_lazy
 
 from users.models import User
 from core.models import File
-
-from django.core.serializers import serialize
-from django.http.response import HttpResponse, JsonResponse
 
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm as OldUserCreationForm
 from django.contrib.auth import login, logout, authenticate
@@ -15,13 +16,33 @@ from django.views import generic
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, ButtonHolder, Submit
 
+from jsonrpc import jsonrpc_method
+import base64, hashlib, json
+
 
 def core_index(request):
     return render(request, 'core/index.html')
 
-def get_file(request, key):
-    file = File.objects.all().filter(owners=request.user, key=key)
-    return HttpResponse(serialize('json', file), content_type='application/json')
+
+@jsonrpc_method( 'api.get_file' )
+def get_file(request, filename):
+    key = generate_key(filename)
+    file = File.objects.filter(key=key, owners=request.user).first()
+    print(filename)
+
+    if file is None:
+        return HttpResponseNotFound('404')
+
+    else:
+        responce = HttpResponse()
+        responce['X-Accel-Redirect'] = '/protected/{}/{}/'.format(settings.AWS_STORAGE_BUCKET_NAME, key)
+        return responce
+
+
+def generate_key(filename):
+    h = hashlib.new('md5')
+    h.update(filename.encode('utf-8'))
+    return h.hexdigest()
 
 
 class UserCreationForm(OldUserCreationForm):

@@ -2,6 +2,11 @@
 
 {% block TITLE %} Категории - {{ block.super }} {% endblock %}
 
+{% block CUSTOME_SCRIPTS %}
+    <script src="//cdn.jsdelivr.net/sockjs/1.1/sockjs.min.js" type="text/javascript"></script>
+    <script src="https://rawgit.com/centrifugal/centrifuge-js/c2/dist/centrifuge.min.js"></script>
+{% endblock %}
+
 {% block CONTENT %}
 
     <div class="row mt-2">
@@ -34,7 +39,7 @@
         </form>
     </div>
 
-    <div class="row">
+    <div class="row categories">
         {% for category in categories %}
             <div class="col-md-12">
                 <div class="card mt-1">
@@ -56,4 +61,54 @@
             <div class="col-md-12">Категории пока пусты</div>
         {% endfor %}
     </div>
+
+    <script type="text/javascript">
+      var centrifuge = new Centrifuge('{{ CENTRIFUGE_SOCKJS_ENDPOINT }}', { debug: true });
+      centrifuge.setToken('{{ CENTRIFUGE_TOKEN }}');
+
+      var channel = 'public:screen-updates';
+      var subscription = centrifuge.subscribe(channel, function(message) {
+        const category = JSON.parse(message.data.category);
+        const category_id = category[0].pk;
+        const category_data = category[0].fields;
+
+        const category_div =
+        `<div class="col-md-12">
+            <div class="card mt-1">
+                <div class="card-body">
+                    <a class="card-link" href="/categories/${ category_id }/detail">${ category_data.name }</a>
+                    <p>${ category_data.description }</p>
+                    {% if user.is_superuser %}
+                        <div class="card-link float-right"><a href="/categories/${ category_id }/remove">Скрыть</a></div><br>
+                        <div class="card-link float-right"><a href="/categories/${ category_id }/edit">Редактировать</a></div>
+                    {% endif %}
+                 </div>
+            </div>
+        </div>`;
+        var category_list = document.body.querySelector('.categories');
+        category_list.innerHTML += category_div;
+      });
+
+      centrifuge.on('connect', function(context) {
+        console.log('connected');
+      });
+
+      subscription.on('subscribe', function() {
+        console.log("subscribed");
+      });
+
+      subscription.on('error', function(err) {
+        console.log("error subscribing", err);
+      });
+
+      subscription.on('join', function(message) {
+        console.log(message);
+      });
+
+      subscription.on('leave', function(message) {
+        console.log(message);
+      });
+
+      centrifuge.connect();
+    </script>
 {% endblock %}

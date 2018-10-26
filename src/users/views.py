@@ -5,7 +5,6 @@ import base64, hashlib, json
 from jsonrpc import jsonrpc_method
 from users.models import User
 from core.models import File
-from django.http.response import HttpResponseForbidden, HttpResponseNotFound, HttpResponseRedirect, HttpResponse
 
 def user_index(request):
     return render(request, 'users/index.html')
@@ -49,22 +48,6 @@ def upload_file( request, user_pk, file_json ):
         new_file.owners.add(owner)
 
     return key
-
-
-@jsonrpc_method( 'api.get_file' )
-def get_file(request, filename):
-    key = generate_key(filename)
-
-    file = File.objects.filter(key=key, owners=request.user).first()
-
-    if file is None:
-        return HttpResponseNotFound('404')
-        # return HttpResponseForbidden('403')
-
-    else:
-        responce = HttpResponse()
-        responce['X-Accel-Redirect'] = '/protected/{}/'.format(key)
-        return responce
 
 
 def generate_key(filename):

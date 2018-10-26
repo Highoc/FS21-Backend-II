@@ -27,8 +27,8 @@ urlpatterns = [
     ),
 
     url(
-        r'^get_file/(?P<key>\w+)/$',
+        r'^get_file/(?P<filename>\w+.\w+)/$',
         get_file,
         name='get_file'
-    )
+    ),
 ]
