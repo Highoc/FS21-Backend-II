@@ -1,3 +1,4 @@
 *.pyc
 .idea
+src/.db_data
 env/

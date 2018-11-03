@@ -96,7 +96,6 @@ def category_edit(request, pk=None):
 
 
 def category_add(request):
-
     if not request.user.is_superuser:
         return Http404()
 

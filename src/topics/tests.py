@@ -5,9 +5,9 @@ from django.test import TestCase
 from django.test.client import Client
 
 from mock import patch
-from manager_user.models import User
+from users.models import User
 from .models import Topic
-import manager_topic.views
+import topics.views
 
 import factory
 
@@ -40,7 +40,7 @@ class TopicTest(TestCase):
             topics[i] = RandomTopicFactory.create()
 
         response = self.client.get('/topic/list/')
-        content = json.loads(response.content)
+        content = json.loads(response.content.decode())
 
         for i in range(10):
             fields = content[i]['fields']
@@ -54,7 +54,7 @@ class TopicMockTest(TestCase):
     @patch('topics.views.get_200')
     def test_mock(self, get_200_status_mock):
         get_200_status_mock.return_value = 200
-        value = manager_topic.views.get_200()
+        value = topics.views.get_200()
 
         self.assertEqual(value, 200)
         self.assertEqual(get_200_status_mock.call_count, 1)
@@ -74,7 +74,7 @@ class TopicFixtureTest(TestCase):
 
     def test_view(self):
         response = self.client.get('/topic/list/')
-        content = json.loads(response.content)
+        content = json.loads(response.content.decode())
         #print content
 
         self.assertEqual(content[0]['fields']['name'], 'Topic #1')
