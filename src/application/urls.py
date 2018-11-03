@@ -3,7 +3,8 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls import include, url
 
-from users.views import upload_photo, upload_file, get_file
+from core.views import get_file
+from users.views import upload_photo, upload_file
 from topics.views import topic_detail, topic_remove, topic_list
 
 from jsonrpc import jsonrpc_site

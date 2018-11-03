@@ -92,6 +92,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'social_django.context_processors.backends',
+                'core.context_processors.main',
             ],
         },
     },
@@ -106,10 +107,10 @@ WSGI_APPLICATION = 'application.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mipt_overflow',
-        'USER': 'highoc',
-        'PASSWORD': 'Ssdawz5566__',
-        'HOST': 'localhost'
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST')
     }
 }
 
@@ -179,3 +180,8 @@ SOCIAL_AUTH_GITHUB_SECRET = '48c52cb81e18b4df36e289610deaa99ddf11a21f'
 SOCIAL_AUTH_GITHUB_SCOPE = ['email']
 
 LOGIN_REDIRECT_URL = '/'
+
+CENTRIFUGE_ADDRESS = 'http://localhost:9000'
+CENTRIFUGE_SECRET = '09a3bbb7-8b2b-445b-b1f4-7913287a3ea5'
+CENTRIFUGE_API_KEY = '1erj444h-9fhj-pasd-oas4-988f33d33d21'
+CENTRIFUGE_TIMEOUT = 5

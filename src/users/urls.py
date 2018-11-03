@@ -14,9 +14,4 @@ urlpatterns = [
         name='info'
     ),
 
-    url(
-        r'^get_file/(?P<filename>\w+.\w+)/$',
-        get_file,
-        name='get_file'
-    )
 ]

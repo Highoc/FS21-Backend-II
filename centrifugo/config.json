@@ -1,0 +1,13 @@
+{
+  "secret": "09a3bbb7-8b2b-445b-b1f4-7913287a3ea5",
+  "admin_password": "760dbd6f-9d0c-4843-b4bd-af2faebde4a0",
+  "admin_secret": "2e949c34-6aaa-4e83-a69f-52221179f761",
+  "api_key": "1erj444h-9fhj-pasd-oas4-988f33d33d21",
+  "port": 9000,
+  "namespaces": [
+    {
+      "name": "public",
+      "anonymous": true
+    }
+  ]
+}

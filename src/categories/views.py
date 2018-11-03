@@ -8,6 +8,7 @@ from crispy_forms.layout import Submit
 from django.core.cache import caches
 from likes.models import Like
 from django.db.models import Q
+from django.core.serializers import serialize
 
 cache = caches['default']
 
@@ -89,13 +90,12 @@ def category_edit(request, pk=None):
         context['category_form'] = form
         if form.is_valid():
             form.save()
-            return redirect('manager_category:list')
+            return redirect('categories:list')
         else:
             return render(request, 'categories/add.html', {'category_form': form})
 
 
 def category_add(request):
-
     if not request.user.is_superuser:
         return Http404()
 
@@ -107,10 +107,30 @@ def category_add(request):
         form = CategoryForm(request.POST)
         if form.is_valid():
             category = form.save()
-            return redirect('manager_category:detail', pk=category.id)
+            publish_category(category)
+            return redirect('categories:detail', pk=category.id)
         else:
             return render(request, 'categories/add.html', {'category_form': form})
 
+import requests, json
+from application.settings import CENTRIFUGE_API_KEY
+
+def publish_category(category):
+    command = {
+        "method": "publish",
+        "params": {
+            "channel": "public:screen-updates",
+                "data": {
+                    "category": serialize('json', [ category, ], )
+                }
+            }
+    }
+
+    api_key = CENTRIFUGE_API_KEY
+    data = json.dumps(command)
+    headers = {'Content-type': 'application/json', 'Authorization': 'apikey ' + api_key}
+    resp = requests.post("http://localhost:9000/api", data=data, headers=headers)
+    print(resp.json())
 
 def category_remove(request, pk=None):
 
