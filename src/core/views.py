@@ -1,7 +1,8 @@
-from django.http.response import HttpResponseForbidden, HttpResponseNotFound, HttpResponseRedirect, HttpResponse
+from django.http.response import HttpResponseForbidden, HttpResponseNotFound, HttpResponseRedirect, HttpResponse, JsonResponse
 
 from application import settings
 
+from django.middleware.csrf import get_token
 from django.shortcuts import render
 from django.urls import reverse_lazy
 
@@ -22,6 +23,12 @@ import base64, hashlib, json
 
 def core_index(request):
     return render(request, 'core/index.html')
+
+def test(request):
+    if request.method == 'GET':
+        return JsonResponse({ 'csrfmiddlewaretoken': get_token(request)})
+    elif request.method == 'POST':
+        return JsonResponse({ 'status': 'OK'})
 
 
 @jsonrpc_method( 'api.get_file' )

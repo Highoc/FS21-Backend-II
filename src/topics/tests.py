@@ -75,7 +75,6 @@ class TopicFixtureTest(TestCase):
     def test_view(self):
         response = self.client.get('/topic/list/')
         content = json.loads(response.content.decode())
-        #print content
 
         self.assertEqual(content[0]['fields']['name'], 'Topic #1')
 
