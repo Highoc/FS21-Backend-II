@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "1.0.0",
   "dependencies": {
-    "@highoc/front-app": "^0.1.1",
+    "@highoc/front-app": "^0.1.3",
     "serve": "^10.0.2"
   },
   "description": "",
