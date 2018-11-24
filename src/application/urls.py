@@ -5,7 +5,7 @@ from django.conf.urls import include, url
 
 from core.views import test
 
-from core.views import get_file
+from core.views import public, protected
 from users.views import upload_photo, upload_file
 from topics.views import topic_detail, topic_remove, topic_list
 

@@ -13,7 +13,7 @@ if __name__ == '__main__':
     user_pk = sys.argv[1]
     filename = sys.argv[2]
 
-    rpc_server = ServiceProxy('http://localhost:8080/api/')
+    rpc_server = ServiceProxy('http://localhost:8000/api/')
     with open( filename, 'rb') as file:
 
         input_content = file.read()

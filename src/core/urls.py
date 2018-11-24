@@ -27,8 +27,13 @@ urlpatterns = [
     ),
 
     url(
-        r'^get_file/(?P<filename>\w+.\w+)/$',
-        get_file,
-        name='get_file'
+        r'^public/(?P<filename>\w+.\w+)/$',
+        public,
+        name='public'
+    ),
+    url(
+        r'^protected/(?P<bucket>\w+)/(?P<key>\w+)/$',
+        protected,
+        name='protected'
     ),
 ]
