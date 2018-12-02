@@ -2,27 +2,22 @@ from django.conf.urls import url
 from core.views import *
 
 urlpatterns = [
-    url(
-        r'^$',
-        core_index,
-        name='index'
-    ),
 
     url(
         r'^login/$',
-        LoginView.as_view(),
+        login,
         name='login'
     ),
 
     url(
         r'^logout/$',
-        LogoutView.as_view(),
+        logout,
         name='logout'
     ),
 
     url(
         r'^register/$',
-        SignupView.as_view(),
+        register,
         name='register'
     ),
 

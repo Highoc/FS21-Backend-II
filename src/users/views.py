@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.core.files.base import ContentFile
 import base64, hashlib, json
-
+from django.views.decorators.csrf import csrf_exempt
 from jsonrpc import jsonrpc_method
 from users.models import User
 from core.models import File
-
+from django.http.response import HttpResponseNotFound, JsonResponse, Http404, HttpResponse
+from django.core.serializers import serialize
 def user_index(request):
     return render(request, 'users/index.html')
 
@@ -54,3 +55,35 @@ def generate_key(filename):
     h = hashlib.new('md5')
     h.update(filename.encode('utf-8'))
     return h.hexdigest()
+
+@csrf_exempt
+def get_user(request, id=None):
+    if request.method == 'GET':
+        user = User.objects.get(id=id)
+        if not user is None:
+            return JsonResponse({
+                'id': user.id,
+                'login': user.username,
+                'name': user.first_name,
+                'surname': user.last_name,
+            })
+        else:
+            return HttpResponseNotFound()
+    elif request.method == 'POST':
+        return Http404('Wrong request method')
+
+@csrf_exempt
+def get_all_users(request):
+    if request.method == 'GET':
+        users = User.objects.all()
+        j_users = []
+        for user in users:
+            j_users.append({
+                'id': user.id,
+                'login': user.username,
+                'name': user.first_name,
+                'surname': user.last_name,
+            })
+        return JsonResponse(j_users, safe=False)
+    elif request.method == 'POST':
+        return Http404('Wrong request method')

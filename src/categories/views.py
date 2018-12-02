@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django import forms
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from .models import Category
 from django.forms import ModelForm
 from crispy_forms.helper import FormHelper
@@ -9,32 +9,24 @@ from django.core.cache import caches
 from likes.models import Like
 from django.db.models import Q
 from django.core.serializers import serialize
-
+from django.views.decorators.csrf import csrf_exempt
 cache = caches['default']
 
-def category_list(request):
 
+@csrf_exempt
+def category_list(request):
     categories = Category.objects.all()
 
-    form = CategorySortForm(request.GET)
+    j_categories = []
+    for category in categories:
+        j_categories.append({
+            'id': category.id,
+            'name': category.name,
+            'description': category.description,
+            'topics_id': [entry for entry in category.topics.values_list('id', flat=True)],
+        })
 
-    if form.is_valid():
-        data = form.cleaned_data
-
-        if data['sort']:
-            categories = categories.order_by(data['sort'])
-
-        if data['search']:
-            categories = categories.filter(name__icontains=data['search'])
-
-
-    context = {
-        'categories': categories,
-        'categories_form': form,
-    }
-
-    return render(request, 'categories/list.html', context)
-
+    return JsonResponse(j_categories, safe=False)
 
 def category_detail(request, pk=None):
     category = get_object_or_404(Category, id=pk)

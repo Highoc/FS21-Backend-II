@@ -1,9 +1,11 @@
 import time
 
+from django.http import JsonResponse
+
 from django import forms
 from django.db import models
 from django.views.generic import CreateView, UpdateView, DetailView
-from django.shortcuts import render, get_object_or_404, reverse, HttpResponse
+from django.shortcuts import render, get_object_or_404, reverse, HttpResponse, Http404
 from django.core.serializers import serialize
 
 from topics.models import Topic
@@ -13,33 +15,26 @@ from comments.models import Comment
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-
+from django.views.decorators.csrf import csrf_exempt
 from jsonrpc import jsonrpc_method
 
-@jsonrpc_method('api.topic_list')
+
+@csrf_exempt
 def topic_list(request):
-    topics = Topic.objects.all()
-
-    form = TopicsListForm(request.GET)
-    if form.is_valid():
-        data = form.cleaned_data
-
-        if data['sort']:
-            topics = topics.order_by(data['sort'])
-
-        if data['search']:
-            topics = topics.filter(name__icontains=data['search'])
-
-        if data['category']:
-            topics = topics.filter(categories__name__icontains=data['category'])
-    context = {
-        'topics': topics,
-        'topics_form': form,
-    }
-
-    return HttpResponse(serialize('json', context['topics']), content_type="application/json")
-    #return HttpResponse(serialize('json', context['topics']), content_type="application/json")
-    #return render(request, 'topics/list.html', context)
+    if request.method == 'GET':
+        topics = Topic.objects.all()
+        j_topics = []
+        for topic in topics:
+            j_topics.append({
+                'id': topic.id,
+                'author_id': topic.author_id,
+                'name': topic.name,
+                'text': topic.text,
+                'categories_id': [entry for entry in topic.categories.values_list('id', flat=True)],
+            })
+        return JsonResponse(j_topics, safe=False)
+    else:
+        return Http404('Wrong request method')
 
 @jsonrpc_method('api.topic_detail')
 def topic_detail(request, pk=None):
@@ -135,7 +130,7 @@ class TopicAdd(CreateView):
         return super(TopicAdd, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse('manager_topic:detail', kwargs={'pk': self.object.pk})
+        return reverse('topics:detail', kwargs={'pk': self.object.pk})
 
 
 class TopicEdit(UpdateView):
@@ -150,7 +145,7 @@ class TopicEdit(UpdateView):
         return queryset
 
     def get_success_url(self):
-        return reverse('manager_topic:detail', kwargs={'pk': self.object.pk})
+        return reverse('topics:detail', kwargs={'pk': self.object.pk})
 
 
 def topic_comments(request, pk=None):

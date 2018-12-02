@@ -18,7 +18,7 @@ urlpatterns = [
 
     url(
         r'^list/$',
-        login_required(category_list),
+        category_list,
         name='list'
     ),
 

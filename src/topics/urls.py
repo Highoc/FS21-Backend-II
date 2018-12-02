@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 urlpatterns = [
     url(
         r'^list/$',
-        login_required(topic_list),
+        topic_list,
         name='list'
     ),
 

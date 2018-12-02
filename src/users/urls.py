@@ -14,4 +14,15 @@ urlpatterns = [
         name='info'
     ),
 
+    url(
+        r'^get_user/(?P<id>\d+)/$',
+        get_user,
+        name='get_user'
+    ),
+
+    url(
+        r'^get_all_users/$',
+        get_all_users,
+        name='get_all_users'
+    ),
 ]
