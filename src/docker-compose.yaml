@@ -3,6 +3,7 @@ version: '3.3'
 services:
   django-backend:
     depends_on: [ mysql-server ]
+    container_name: backend
     build:
       context: .
       dockerfile: Dockerfile
@@ -29,6 +30,8 @@ services:
     restart: always
     volumes:
     - .db_data:/var/lib/mysql
+    ports:
+    - 3400:3306
     environment:
       MYSQL_ROOT_PASSWORD: dev_root_pass
       MYSQL_DATABASE: dev_db

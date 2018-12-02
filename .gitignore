@@ -3,3 +3,4 @@
 src/.db_data
 env/
 frontend/node_modules
+*.pem
