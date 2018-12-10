@@ -121,7 +121,7 @@ def publish_category(category):
     api_key = CENTRIFUGE_API_KEY
     data = json.dumps(command)
     headers = {'Content-type': 'application/json', 'Authorization': 'apikey ' + api_key}
-    resp = requests.post("http://localhost:9000/api", data=data, headers=headers)
+    resp = requests.post("http://centrifugo:9000/api", data=data, headers=headers)
     print(resp.json())
 
 def category_remove(request, pk=None):

@@ -14,8 +14,11 @@ test: start
 	docker-compose exec django-backend python3 /app/manage.py test
 	make stop
 
-migrate: start
+migrate: makemigrations
 	docker-compose exec django-backend python3 /app/manage.py migrate
+
+makemigrations: start
+	docker-compose exec django-backend python3 /app/manage.py makemigrations
 
 run: migrate
 	docker-compose logs -f

@@ -22,6 +22,18 @@ urlpatterns = [
     ),
 
     url(
+        r'^feedback/$',
+        getFeedback,
+        name='feedback'
+    ),
+
+    url(
+        r'^profile/$',
+        profile,
+        name='profile'
+    ),
+
+    url(
         r'^public/(?P<filename>\w+.\w+)/$',
         public,
         name='public'
