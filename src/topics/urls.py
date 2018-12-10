@@ -11,7 +11,7 @@ urlpatterns = [
 
     url(
         r'^add/$',
-        login_required(TopicAdd.as_view()),
+        topic_add,
         name='add'
     ),
 

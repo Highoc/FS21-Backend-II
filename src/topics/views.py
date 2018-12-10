@@ -7,7 +7,7 @@ from django.db import models
 from django.views.generic import CreateView, UpdateView, DetailView
 from django.shortcuts import render, get_object_or_404, reverse, HttpResponse, Http404
 from django.core.serializers import serialize
-
+from users.models import User
 from topics.models import Topic
 from likes.models import Like
 from django.forms import ModelForm
@@ -17,7 +17,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.views.decorators.csrf import csrf_exempt
 from jsonrpc import jsonrpc_method
-
+import hashlib, boto3, json
 
 @csrf_exempt
 def topic_list(request):
@@ -35,6 +35,54 @@ def topic_list(request):
         return JsonResponse(j_topics, safe=False)
     else:
         return Http404('Wrong request method')
+
+@csrf_exempt
+def topic_add(request):
+    if request.method == 'GET':
+        return Http404('Wrong request method')
+    elif request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        data['categories'] = [1]
+        form = TopicForm(data=data)
+        if form.is_valid():
+            topic = form.save(commit=False)
+            topic.author_id = data['author_id']
+            topic.save()
+            form.save_m2m()
+            publish_topic(topic)
+            return JsonResponse({ 'status': 200 })
+        else:
+            return HttpResponse('Error', status=400)
+
+class TopicForm(ModelForm):
+    class Meta:
+        model = Topic
+        fields = ('name', 'categories', 'text')
+
+import requests, json
+from application.settings import CENTRIFUGE_API_KEY
+
+def publish_topic(topic):
+    command = {
+        "method": "publish",
+        "params": {
+            "channel": "public:topic",
+                "data": {
+                    'id': topic.id,
+                    'author_id': 1,
+                    'name': topic.name,
+                    'text': topic.text,
+                    'categories_id': [entry for entry in topic.categories.values_list('id', flat=True)],
+                }
+            }
+    }
+
+    api_key = CENTRIFUGE_API_KEY
+    data = json.dumps(command)
+    print(data)
+    headers = {'Content-type': 'application/json', 'Authorization': 'apikey ' + api_key}
+    resp = requests.post("http://centrifugo:9000/api", data=data, headers=headers)
+    print(resp.json())
 
 @jsonrpc_method('api.topic_detail')
 def topic_detail(request, pk=None):
@@ -66,6 +114,7 @@ def topic_detail(request, pk=None):
 
     #return HttpResponse(serialize('json', topic), content_type="application/json")
     return render(request, 'topics/detail.html', context)
+
 
 
 @jsonrpc_method('api.topic_remove')
@@ -105,33 +154,6 @@ class CommentForm(ModelForm):
         self.helper = FormHelper()
         self.helper.form_method = 'post'
         self.helper.add_input(Submit('submit', 'Добавить комментарий'))
-
-
-class TopicForm(ModelForm):
-    class Meta:
-        model = Topic
-        fields = ('name', 'categories', 'text')
-
-    def __init__(self, *args, **kwargs):
-        super(TopicForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_class = 'blueForms'
-        self.helper.form_method = 'post'
-        self.helper.add_input(Submit('submit', 'Сохранить'))
-
-
-class TopicAdd(CreateView):
-    form_class = TopicForm
-    template_name = 'topics/add.html'
-    context_object_name = 'topic'
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super(TopicAdd, self).form_valid(form)
-
-    def get_success_url(self):
-        return reverse('topics:detail', kwargs={'pk': self.object.pk})
-
 
 class TopicEdit(UpdateView):
     form_class = TopicForm

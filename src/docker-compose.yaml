@@ -10,9 +10,10 @@ services:
     command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
     - .:/app
+    links:
+    - centrifugo
     ports:
     - "8000:8000"
-
     environment:
       DB_NAME: dev_db
       DB_HOST: mysql-server
@@ -23,6 +24,8 @@ services:
       AWS_STORAGE_BUCKET_NAME: miptoverflow
       AWS_ACCESS_KEY: quZTPp3V28P7V1SGJRXxvs
       AWS_SECRET_KEY: 7arUgwahLMmhHpreUJh9RTkHB7LdD5UNcTjA5VLSP59G
+
+      CENTRIFUGE_ADDRESS: centrifugo
 
   mysql-server:
     image: mysql:latest

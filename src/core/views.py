@@ -5,7 +5,8 @@ from application import settings
 from django.middleware.csrf import get_token
 
 from users.models import User
-from core.models import File
+from core.models import File, Feedback
+from django.forms import ModelForm
 
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import login as loginUser, logout as logoutUser
@@ -66,7 +67,7 @@ def test(request):
 @jsonrpc_method( 'api.public' )
 def public(request, filename):
     key = generate_key(filename)
-    file = File.objects.filter(key=key, owners=request.user).first()
+    file = File.objects.filter(key=key, owners=1).first()
 
     if file is None:
         return HttpResponseNotFound('404')
@@ -90,7 +91,7 @@ def protected(request, bucket, key):
         'get_object',
         Params={
             'Bucket': bucket,
-            'Key': 'files/{}/{}'.format(request.user.pk, key),
+            'Key': 'files/1/{}'.format(key),
         }
     )
 
@@ -101,3 +102,35 @@ def generate_key(filename):
     h = hashlib.new('md5')
     h.update(filename.encode('utf-8'))
     return h.hexdigest()
+
+@csrf_exempt
+def getFeedback(request):
+    if request.method == 'GET':
+        return Http404('Wrong request method')
+
+    elif request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        form = FeedbackForm(data=data)
+        if form.is_valid():
+            feedback = form.save()
+            print(feedback)
+            return JsonResponse({'status': 200})
+
+        print('Feedback received:\n{}'.format(data))
+        return JsonResponse({ 'status': 200 })
+
+@csrf_exempt
+def profile(request):
+    if request.method == 'GET':
+        return Http404('Wrong request method')
+
+    elif request.method == 'POST':
+        # data = json.loads(request.body.decode('utf-8'))
+        # print('User profile received:\n{}'.format(data))
+        return JsonResponse({'status': 200})
+
+
+class FeedbackForm(ModelForm):
+    class Meta:
+        model = Feedback
+        fields = ('description', 'username', 'issue')
